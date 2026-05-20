@@ -308,8 +308,10 @@ bot_app.add_handler(
     )
 )
 
-async def post_init(app):
+async def iniciar_lembrete(app):
     app.create_task(lembrete_turno(app))
+
+bot_app.post_init = iniciar_lembrete
 
 if __name__ == "__main__":
 
@@ -318,4 +320,4 @@ if __name__ == "__main__":
 
     print("BOT ONLINE 🚀")
 
-    bot_app.run_polling(post_init=post_init)
+    bot_app.run_polling()
