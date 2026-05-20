@@ -26,9 +26,7 @@ TOKEN = "8954940101:AAE5dYG70Ur3RYbVteSnGueCKY2gA0UHMsM"
 GRUPO_ID = -5192063045
 
 # caminho do tesseract no windows
-pytesseract.pytesseract.tesseract_cmd = (
-    r"C:\Program Files\Tesseract-OCR\tesseract.exe"
-)
+# pytesseract.pytesseract.tesseract_cmd = (r"C:\Program Files\Tesseract-OCR\tesseract.exe")
 
 # =========================
 # BANCO SQLITE

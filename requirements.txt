@@ -1,0 +1,4 @@
+python-telegram-bot
+pytesseract
+Pillow
+pytz
