@@ -14,6 +14,21 @@ import re
 import os
 import asyncio
 import pytz
+from flask import Flask
+import threading
+
+web_app = Flask(__name__)
+
+# =========================
+# WEB SERVER (Render precisa disso)
+# =========================
+@web_app.route("/")
+def home():
+    return "Bot está rodando!"
+
+def run_web():
+    port = int(os.environ.get("PORT", 10000))
+    web_app.run(host="0.0.0.0", port=port, debug=False, use_reloader=False)
 
 # =========================
 # CONFIGURAÇÕES
@@ -243,7 +258,7 @@ async def historico(
 # LEMBRETE 19H
 # =========================
 
-async def lembrete_turno(app):
+async def lembrete_turno(bot_app):
 
     while True:
 
@@ -264,7 +279,7 @@ Está na hora de finalizar o plantão.
 📸 Envie a imagem do relatório operacional do turno para registrar as estatísticas do dia.
 """
 
-            await app.bot.send_message(
+            await bot_app.bot.send_message(
                 chat_id=GRUPO_ID,
                 text=mensagem,
                 parse_mode="Markdown"
@@ -280,25 +295,27 @@ Está na hora de finalizar o plantão.
 # INICIAR BOT
 # =========================
 
-app = ApplicationBuilder().token(TOKEN).build()
+bot_app = ApplicationBuilder().token(TOKEN).build()
 
-app.add_handler(
+bot_app.add_handler(
     MessageHandler(filters.PHOTO, receber_foto)
 )
 
-app.add_handler(
+bot_app.add_handler(
     CommandHandler(
         "historico",
         historico
     )
 )
 
-loop = asyncio.get_event_loop()
+async def post_init(app):
+    app.create_task(lembrete_turno(app))
 
-loop.create_task(
-    lembrete_turno(app)
-)
+if __name__ == "__main__":
 
-print("BOT ONLINE 🚀")
+    t1 = threading.Thread(target=run_web, daemon=True)
+    t1.start()
 
-app.run_polling()
+    print("BOT ONLINE 🚀")
+
+    bot_app.run_polling(post_init=post_init)
